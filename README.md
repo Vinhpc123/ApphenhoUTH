@@ -1,16 +1,14 @@
-# apphenhouth
+<<<<<<< HEAD
+# ❤️ UTH Love – Ứng Dụng Hẹn Hò Trực Tuyến
 
-A new Flutter project.
+**UTH Love** là ứng dụng hẹn hò trực tuyến mang theo trải nghiệm mới cho những người độc thân có nhu cầu tìm kiếm tình yêu.  
+Ứng dụng cho phép bạn:  
 
-## Getting Started
+✅ Lựa chọn người phù hợp với nhu cầu tìm kiếm tình yêu của bạn.  
+✅ Nhắn tin và trò chuyện để kết nối với nhau.  
 
-This project is a starting point for a Flutter application.
+✨ Hãy tham gia **UTH Love** ngay hôm nay để tìm một nửa của bạn! ✨  
 
-A few resources to get you started if this is your first Flutter project:
+Link Figma: https://www.figma.com/design/gv5ybhFJEr8wv9svfDlhtU/App-UTH-Love?node-id=0-1&p=f&t=3YIGQwqzntuhLt2g-0
+=======
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
