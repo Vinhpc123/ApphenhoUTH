@@ -40,6 +40,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(height: 10),
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.white,
@@ -77,6 +78,7 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: 100),
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.white,
@@ -96,7 +98,7 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 180),
+            SizedBox(height: 80),
             Text(
               "By clicking Log In, you agree with our Terms. Learn how we process your data in our Privacy Policy and Cookies Policy.",
               textAlign: TextAlign.center,
