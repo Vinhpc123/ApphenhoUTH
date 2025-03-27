@@ -1,3 +1,7 @@
+import 'package:apphenhouth/Login/facebook_login.dart';
+import 'package:apphenhouth/Login/google_login.dart';
+import 'package:apphenhouth/Login/phone_login.dart';
+import 'package:apphenhouth/Login/signup.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -40,7 +44,6 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 10),
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.white,
@@ -78,7 +81,6 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 100),
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.white,
@@ -98,7 +100,7 @@ class LoginScreen extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 80),
+            SizedBox(height: 180),
             Text(
               "By clicking Log In, you agree with our Terms. Learn how we process your data in our Privacy Policy and Cookies Policy.",
               textAlign: TextAlign.center,
@@ -109,12 +111,54 @@ class LoginScreen extends StatelessWidget {
               ),
             ),
             SizedBox(height: 30),
-            _buildLoginButton("LOGIN WITH GOOGLE", Icons.g_mobiledata, Colors.white, Colors.black),
-            _buildLoginButton("LOGIN WITH FACEBOOK", Icons.facebook, Colors.white, Colors.blue),
-            _buildLoginButton("LOGIN WITH PHONE", Icons.phone, Colors.white, Colors.green),
+            _buildLoginButton(
+                "LOGIN WITH GOOGLE",
+                Icons.g_mobiledata,
+                Colors.white,
+                Colors.black,
+                    () {
+                  // Điều hướng đến trang đăng nhập Google
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => GoogleLoginScreen()),
+                  );
+                }
+            ),
+            _buildLoginButton(
+                "LOGIN WITH FACEBOOK",
+                Icons.facebook,
+                Colors.white,
+                Colors.blue,
+                    () {
+                  // Điều hướng đến trang đăng nhập Facebook
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FacebookLoginScreen()),
+                  );
+                }
+            ),
+            _buildLoginButton(
+                "LOGIN WITH PHONE",
+                Icons.phone,
+                Colors.white,
+                Colors.green,
+                    () {
+                  // Điều hướng đến trang đăng nhập bằng số điện thoại
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => PhoneLoginScreen()),
+                  );
+                }
+            ),
             SizedBox(height: 20),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                // Điều hướng đến trang đăng ký
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpScreen()),
+                );
+              },
               child: Text(
                 "Don't have an account? Signup",
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -126,7 +170,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLoginButton(String text, IconData icon, Color bgColor, Color iconColor) {
+  Widget _buildLoginButton(String text, IconData icon, Color bgColor, Color iconColor, VoidCallback onPressed) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: ElevatedButton.icon(
@@ -137,7 +181,7 @@ class LoginScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        onPressed: () {},
+        onPressed: onPressed,
         icon: Icon(icon, color: iconColor),
         label: Text(
           text,
