@@ -88,7 +88,7 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Icon(Icons.play_arrow, color: Colors.teal, size: 40),
-                  SizedBox(height: 5),
+                  SizedBox(height: 20),
                   Text(
                     "UTH Love",
                     style: GoogleFonts.pacifico(

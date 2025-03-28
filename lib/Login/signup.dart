@@ -168,15 +168,29 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   SizedBox(width: 20),
                   IconButton(
+<<<<<<< HEAD
                     icon: Image.network(
                       'D:/TL UTH/ApphenhoUTH-master/image',
                       width: 40,
                       height: 40,
+=======
+                    icon: Image.asset(
+                      'image/google.png', // Đảm bảo đúng đường dẫn
+                      width: 40,
+                      height: 40,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(Icons.error, color: Colors.red, size: 40); // Hiển thị icon lỗi nếu ảnh không tải được
+                      },
+>>>>>>> 29cd0e4 (fix front screen and logo)
                     ),
                     onPressed: () {
                       // Xử lý đăng nhập Google
                     },
                   ),
+<<<<<<< HEAD
+=======
+
+>>>>>>> 29cd0e4 (fix front screen and logo)
                 ],
               ),
 
