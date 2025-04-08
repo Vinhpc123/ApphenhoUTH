@@ -42,12 +42,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 decoration: InputDecoration(
                   hintText: 'Full Name',
                   hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
+                  border: UnderlineInputBorder(),
                 ),
               ),
               SizedBox(height: 20),
@@ -56,15 +51,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
               Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(color: Colors.grey),
-                  ),
+                  border: Border(bottom: BorderSide(color: Colors.grey)),
                 ),
                 child: DropdownButton<String>(
                   value: selectedGender,
                   hint: Text('Gender', style: TextStyle(color: Colors.grey)),
                   isExpanded: true,
-                  underline: Container(), // Remove default underline
+                  underline: Container(),
                   items: genders.map((String gender) {
                     return DropdownMenuItem<String>(
                       value: gender,
@@ -85,12 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 decoration: InputDecoration(
                   hintText: 'DD/MM/YYYY',
                   hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
+                  border: UnderlineInputBorder(),
                 ),
               ),
               SizedBox(height: 20),
@@ -101,12 +89,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 decoration: InputDecoration(
                   hintText: 'Phone Number',
                   hintStyle: TextStyle(color: Colors.grey),
-                  border: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.grey),
-                  ),
-                  focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.black),
-                  ),
+                  border: UnderlineInputBorder(),
                 ),
               ),
 
@@ -115,9 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               // Sign Up Button
               Center(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // Xử lý sự kiện đăng ký
-                  },
+                  onPressed: () {},
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Color(0xFF00D6B3),
                     minimumSize: Size(double.infinity, 50),
@@ -162,35 +143,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       width: 40,
                       height: 40,
                     ),
-                    onPressed: () {
-                      // Xử lý đăng nhập Facebook
-                    },
+                    onPressed: () {},
                   ),
                   SizedBox(width: 20),
                   IconButton(
-<<<<<<< HEAD
-                    icon: Image.network(
-                      'D:/TL UTH/ApphenhoUTH-master/image',
-                      width: 40,
-                      height: 40,
-=======
                     icon: Image.asset(
-                      'image/google.png', // Đảm bảo đúng đường dẫn
+                      'image/google.png',
                       width: 40,
                       height: 40,
                       errorBuilder: (context, error, stackTrace) {
-                        return Icon(Icons.error, color: Colors.red, size: 40); // Hiển thị icon lỗi nếu ảnh không tải được
+                        return Icon(Icons.error, color: Colors.red, size: 40);
                       },
->>>>>>> 29cd0e4 (fix front screen and logo)
                     ),
-                    onPressed: () {
-                      // Xử lý đăng nhập Google
-                    },
-                  ),
-<<<<<<< HEAD
-=======
 
->>>>>>> 29cd0e4 (fix front screen and logo)
+                    onPressed: () {},
+                  ),
                 ],
               ),
 

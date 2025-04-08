@@ -50,7 +50,11 @@ class _SplashScreenState extends State<SplashScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.play_arrow, color: Colors.teal, size: 40),
+                  Image.asset(
+                    'image/logo.png', // Adjust the path and filename as needed
+                    width: 40, // Match the size of the previous icon
+                    height: 40,
+                  ),
                   SizedBox(height: 5),
                   Text(
                     "UTH Love",
@@ -59,7 +63,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -81,14 +85,19 @@ class LoginScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            SizedBox(height: 100),
             CircleAvatar(
               radius: 60,
               backgroundColor: Colors.white,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.play_arrow, color: Colors.teal, size: 40),
-                  SizedBox(height: 20),
+                  Image.asset(
+                    'image/logo.png', // Adjust the path and filename as needed
+                    width: 40, // Match the size of the previous icon
+                    height: 40,
+                  ),
+                  SizedBox(height: 5),
                   Text(
                     "UTH Love",
                     style: GoogleFonts.pacifico(
