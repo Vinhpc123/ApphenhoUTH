@@ -86,32 +86,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (_isSaving) return;
     setState(() => _isSaving = true);
 
-    // Hiển thị loading
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator()),
-    );
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      Navigator.pop(context);
-      setState(() => _isSaving = false);
-      return;
-    }
-
-    final phone = phoneController.text.trim();
-    final validPrefixes = RegExp(r'^(03|05|07|08|09|01[2|6|8|9])');
-    if (phone.length != 10 || !validPrefixes.hasMatch(phone)) {
-      Navigator.pop(context);
-      setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Số điện thoại không hợp lệ")),
-      );
-      return;
-    }
-
     try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Người dùng chưa đăng nhập")),
+          );
+          setState(() => _isSaving = false);
+        }
+        return;
+      }
+
+      final phone = phoneController.text.trim();
+      final validPrefixes = RegExp(r'^(03|05|07|08|09|01[2|6|8|9])');
+      if (phone.length != 10 || !validPrefixes.hasMatch(phone)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Số điện thoại không hợp lệ")),
+          );
+          setState(() => _isSaving = false);
+        }
+        return;
+      }
+
       final userDocRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
       final userData = <String, dynamic>{};
 
@@ -155,21 +153,30 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         await userDocRef.set(userData, SetOptions(merge: true));
       }
 
-      Navigator.pop(context); // Đóng loading
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Cập nhật thành công"),
-          duration: Duration(seconds: 1),
-        ),
-      );
-      Navigator.pop(context, true);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Cập nhật thành công"),
+            duration: Duration(seconds: 1),
+          ),
+        );
+
+        // Đợi hiển thị snackbar hoàn tất trước khi đóng màn hình
+        await Future.delayed(const Duration(milliseconds: 1200));
+        if (mounted) {
+          Navigator.pop(context, true);
+        }
+      }
     } catch (e) {
-      Navigator.pop(context); // Đóng loading
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Lỗi khi cập nhật: $e")),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Lỗi khi cập nhật: $e")),
+        );
+      }
     } finally {
-      setState(() => _isSaving = false);
+      if (mounted) {
+        setState(() => _isSaving = false);
+      }
     }
   }
 
@@ -181,7 +188,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       lastDate: DateTime.now(),
     );
 
-    if (picked != null) {
+    if (picked != null && mounted) {
       setState(() {
         dobController.text =
         "${picked.day}-${picked.month.toString().padLeft(2, '0')}-${picked.year}";
@@ -224,9 +231,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (newValue) {
-                  setState(() {
-                    genderController.text = newValue!;
-                  });
+                  if (newValue != null) {
+                    setState(() {
+                      genderController.text = newValue;
+                    });
+                  }
                 },
               ),
             ),
@@ -261,9 +270,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (newValue) {
-                  setState(() {
-                    maritalStatusController.text = newValue!;
-                  });
+                  if (newValue != null) {
+                    setState(() {
+                      maritalStatusController.text = newValue;
+                    });
+                  }
                 },
               ),
             ),
@@ -271,7 +282,17 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _isSaving ? null : _saveProfile,
-              child: const Text("Lưu"),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              child: _isSaving
+                  ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+              )
+                  : const Text("Lưu", style: TextStyle(fontSize: 16)),
             ),
           ],
         ),

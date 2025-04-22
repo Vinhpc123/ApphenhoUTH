@@ -2,7 +2,7 @@ import 'package:apphenhouth/Login/phone_login.dart';
 import 'package:apphenhouth/Login/signup.dart';
 import 'package:apphenhouth/Login/wrapper.dart';
 import 'package:apphenhouth/Login/Home/home.dart' hide ChatScreen;
-import 'package:apphenhouth/Login/Home/Chat/screens/chat_screen.dart'; // Import ChatScreen
+import 'package:apphenhouth/Login/Home/Chat/screens/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
           case '/login':
             return MaterialPageRoute(builder: (_) => const LoginScreen());
           case '/chat':
-            return MaterialPageRoute(builder: (_) => const ChatScreen()); // Updated to ChatScreen
+            return MaterialPageRoute(builder: (_) => const ChatScreen());
           default:
             return MaterialPageRoute(
               builder: (_) => const Scaffold(
@@ -60,7 +60,7 @@ class SplashScreenState extends State<SplashScreen> {
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) =>  Wrapper()),
+          MaterialPageRoute(builder: (context) => Wrapper()),
         );
       }
     });
@@ -110,11 +110,17 @@ class LoginScreen extends StatefulWidget {
 class LoginScreenState extends State<LoginScreen> {
   // Save user data to Firestore
   Future<void> saveUserData(User user) async {
-    await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+    final docRef = FirebaseFirestore.instance.collection('users').doc(user.uid);
+    final docSnapshot = await docRef.get();
+
+    // Only set photoURL from provider if it doesn't exist in Firestore
+    String? photoURL = docSnapshot.exists ? docSnapshot.get('photoURL') : user.photoURL;
+
+    await docRef.set({
       'uid': user.uid,
       'displayName': user.displayName ?? 'Anonymous',
       'email': user.email,
-      'photoURL': user.photoURL,
+      'photoURL': photoURL ?? '', // Use existing photoURL if available
       'lastLogin': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
@@ -124,7 +130,6 @@ class LoginScreenState extends State<LoginScreen> {
     try {
       final GoogleSignIn googleSignIn = GoogleSignIn();
 
-      // Đảm bảo người dùng đã đăng xuất trước khi đăng nhập lại
       await googleSignIn.signOut();
 
       final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -139,17 +144,14 @@ class LoginScreenState extends State<LoginScreen> {
         idToken: googleAuth.idToken,
       );
 
-      // Đăng nhập vào Firebase
       UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
-      // Save user data to Firestore
       await saveUserData(userCredential.user!);
 
-      // Điều hướng đến HomeScreen
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const DatingApp()), // Navigate to DatingApp
+          MaterialPageRoute(builder: (_) => const DatingApp()),
         );
       }
     } catch (e) {
@@ -172,10 +174,8 @@ class LoginScreenState extends State<LoginScreen> {
         final OAuthCredential credential = FacebookAuthProvider.credential(accessToken);
         UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
 
-        // Save user data to Firestore
         await saveUserData(userCredential.user!);
 
-        // Điều hướng đến HomeScreen
         if (mounted) {
           Navigator.pushReplacement(
             context,
@@ -301,5 +301,3 @@ class LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-

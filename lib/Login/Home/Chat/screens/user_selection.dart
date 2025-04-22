@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:apphenhouth/Login/Home/Chat/screens/chat_detail_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:apphenhouth/Login/Home/Chat/models/chat_model.dart';
+import 'package:apphenhouth/Login/Home/Chat/screens/chat_detail_screen.dart';
 
 class UserSelectionScreen extends StatelessWidget {
   const UserSelectionScreen({super.key});
@@ -11,93 +11,119 @@ class UserSelectionScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final currentUser = FirebaseAuth.instance.currentUser;
 
+    if (currentUser == null) {
+      return const Scaffold(
+        body: Center(child: Text('Please sign in to select users')),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Select User to Chat'),
-        backgroundColor: Colors.teal,
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .where('uid', isNotEqualTo: currentUser!.uid)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return const Center(child: Text('Error loading users'));
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').doc(currentUser.uid).snapshots(),
+        builder: (context, currentUserSnapshot) {
+          if (currentUserSnapshot.hasError) {
+            return Center(child: Text('Error: ${currentUserSnapshot.error}'));
           }
-          if (snapshot.connectionState == ConnectionState.waiting) {
+
+          if (currentUserSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No users available'));
+
+          if (!currentUserSnapshot.hasData || !currentUserSnapshot.data!.exists) {
+            return const Center(child: Text('Current user data not found'));
           }
 
-          final users = snapshot.data!.docs;
+          final currentUserData = currentUserSnapshot.data!.data() as Map<String, dynamic>;
+          final likedUsers = (currentUserData['likedUsers'] as List<dynamic>?)?.cast<String>() ?? [];
+          print('Current user likedUsers: $likedUsers');
 
-          return ListView.builder(
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              final user = users[index];
-              final userData = user.data() as Map<String, dynamic>;
+          return StreamBuilder<QuerySnapshot>(
+            stream: FirebaseFirestore.instance.collection('users').snapshots(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Error: ${snapshot.error}'));
+              }
 
-              return ListTile(
-                leading: CircleAvatar(
-                  radius: 25,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: userData['avatarUrl'] != null && userData['avatarUrl'].isNotEmpty
-                      ? NetworkImage(userData['avatarUrl'])
-                      : null,
-                  child: userData['avatarUrl'] == null || userData['avatarUrl'].isEmpty
-                      ? const Icon(Icons.person, color: Colors.white)
-                      : null,
-                ),
-                title: Text(userData['displayName'] ?? 'Unknown User'),
-                subtitle: Text(userData['email'] ?? ''),
-                onTap: () async {
-                  // Check if a chat already exists
-                  final chatSnapshot = await FirebaseFirestore.instance
-                      .collection('chats')
-                      .where('participants', arrayContains: currentUser.uid)
-                      .get();
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-                  String? chatId;
-                  for (var doc in chatSnapshot.docs) {
-                    final participants = doc['participants'] as List<dynamic>;
-                    if (participants.contains(user.id)) {
-                      chatId = doc.id;
-                      break;
-                    }
-                  }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const Center(child: Text('No users found'));
+              }
 
-                  // If no chat exists, create a new one
-                  if (chatId == null) {
-                    final newChat = await FirebaseFirestore.instance.collection('chats').add({
-                      'participants': [currentUser.uid, user.id],
-                      'lastMessage': '',
-                      'time': DateTime.now().toString(),
-                    });
-                    chatId = newChat.id;
-                  }
+              final mutuallyLikedUsers = snapshot.data!.docs.where((userDoc) {
+                if (userDoc.id == currentUser.uid) return false;
 
-                  // Fetch user data for the Chat object
-                  final chat = Chat(
-                    chatId: chatId,
-                    userId: user.id,
-                    name: userData['displayName'] ?? 'Unknown User',
-                    lastMessage: '',
-                    time: DateTime.now().toString(),
-                    avatarUrl: userData['avatarUrl'] ?? '',
+                final userData = userDoc.data() as Map<String, dynamic>;
+                final userLikedUsers = (userData['likedUsers'] as List<dynamic>?)?.cast<String>() ?? [];
+                return likedUsers.contains(userDoc.id) && userLikedUsers.contains(currentUser.uid);
+              }).toList();
+
+              if (mutuallyLikedUsers.isEmpty) {
+                return const Center(child: Text('No mutually liked users yet'));
+              }
+
+              return ListView.builder(
+                itemCount: mutuallyLikedUsers.length,
+                itemBuilder: (context, index) {
+                  final userDoc = mutuallyLikedUsers[index];
+                  final userData = userDoc.data() as Map<String, dynamic>;
+                  final name = userData['displayName'] ?? userData['name'] ?? 'Unknown User';
+                  final email = userData['email'] ?? 'No email';
+                  final avatarUrl = userData['photoURL'] ?? '';
+
+                  return ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : null,
+                      child: avatarUrl.isEmpty ? const Icon(Icons.person) : null,
+                    ),
+                    title: Text(name),
+                    subtitle: Text(email),
+                    onTap: () async {
+                      final currentUserId = currentUser.uid;
+                      final selectedUserId = userDoc.id;
+
+                      final participants = [currentUserId, selectedUserId];
+                      participants.sort();
+
+                      final chatQuery = await FirebaseFirestore.instance
+                          .collection('chats')
+                          .where('participants', isEqualTo: participants)
+                          .get();
+
+                      String chatId;
+                      if (chatQuery.docs.isEmpty) {
+                        final chatRef = await FirebaseFirestore.instance.collection('chats').add({
+                          'participants': participants,
+                          'lastMessage': '',
+                          'time': DateTime.now().toString(),
+                        });
+                        chatId = chatRef.id;
+                      } else {
+                        chatId = chatQuery.docs.first.id;
+                      }
+
+                      final chat = Chat(
+                        chatId: chatId,
+                        userId: selectedUserId,
+                        name: name,
+                        lastMessage: '',
+                        time: DateTime.now().toString(),
+                        avatarUrl: avatarUrl,
+                      );
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ChatDetailScreen(chat: chat),
+                        ),
+                      );
+                    },
                   );
-
-                  // Navigate to ChatDetailScreen
-                  if (context.mounted) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ChatDetailScreen(chat: chat),
-                      ),
-                    );
-                  }
                 },
               );
             },

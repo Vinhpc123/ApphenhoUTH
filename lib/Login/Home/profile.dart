@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -46,13 +45,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final snapshot = await docRef.get();
 
     if (!snapshot.exists) {
-      // Tạo mới user nếu chưa tồn tại
       await docRef.set({
         'name': user.displayName ?? '',
         'email': user.email ?? '',
         'phone': user.phoneNumber ?? '',
         'dob': '',
-        'photoURL': user.photoURL ?? '', // Chỉ set lần đầu
+        'photoURL': user.photoURL ?? '',
         'gender': '',
         'hobbies': '',
         'address': '',
@@ -121,12 +119,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             CircleAvatar(
                               key: ValueKey(photoBase64),
                               radius: 55,
-                              backgroundImage: photoBase64.startsWith('data:image')
+                              backgroundImage: photoBase64.isNotEmpty
+                                  ? (photoBase64.startsWith('data:image')
                                   ? MemoryImage(base64Decode(photoBase64.split(',').last))
+                                  : NetworkImage(photoBase64)) as ImageProvider
                                   : const NetworkImage(
                                 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSlRM2-AldpZgaraCXCnO5loktGi0wGiNPydQ&s',
-                              )
-                              as ImageProvider,
+                              ),
                             ),
                             Positioned(
                               bottom: 0,
@@ -207,13 +206,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ElevatedButton(
                           onPressed: _logOut,
                           child: const Text("Đăng xuất"),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.tealAccent[400]),
                         ),
                         const SizedBox(height: 10),
                         ElevatedButton(
                           onPressed: _deleteAccount,
                           child: const Text("Xóa tài khoản"),
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                         ),
                       ],
                     ),
@@ -349,7 +348,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       );
     }
   }
-
 
   Future<void> _deleteAccount() async {
     try {
