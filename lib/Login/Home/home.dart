@@ -162,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.pink,
+        selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         onTap: _onItemTapped,
       ),
@@ -325,7 +325,7 @@ class _HomeContentState extends State<HomeContent> {
                   ),
                   SwipeButton(
                     icon: Icons.favorite,
-                    color: Colors.pink,
+                    color: Colors.blue,
                     onPressed: () => _likeUser(_users[_currentPage]),
                   ),
                 ],
