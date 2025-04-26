@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "14261229136",
+    "project_id": "apphenhouth-fa24c",
+    "storage_bucket": "apphenhouth-fa24c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:14261229136:android:573493c74702fbc6e6e355",
+        "android_client_info": {
+          "package_name": "com.example.apphenhouth"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "14261229136-0197keks6peb3h89a2rra3i871m852qq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.apphenhouth",
+            "certificate_hash": "01ad665a595039ab183032702cfbde228e80c488"
+          }
+        },
+        {
+          "client_id": "14261229136-r34aqi2qi4j3j6ejvlri7qc3ccckcoea.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.apphenhouth",
+            "certificate_hash": "bc96a8d381553f243cc486f1abccbb9464bc4a30"
+          }
+        },
+        {
+          "client_id": "14261229136-08pi1q8jft2lovpgifv6ksoutrob6dlr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmwJxkU-Ds8ou1ERDYgOEXoWwClN9fQDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "14261229136-08pi1q8jft2lovpgifv6ksoutrob6dlr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
